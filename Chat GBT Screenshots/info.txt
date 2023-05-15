@@ -1,0 +1,3 @@
+We used chat gbt to help optimize our winning move function so that
+it did not have to check the entire board for a winning move only
+the area around the last added piece
