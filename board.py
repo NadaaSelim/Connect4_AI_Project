@@ -1,9 +1,18 @@
 import numpy as np
 import pygame
 import random
-
+import sys
+SQUARESIZE = 100
+WHITE = (255,255,255)
+#BOARDCOLOR = (240,230,140)
+BOARDCOLOR = (211,211,211)
+RED = (128,0,0)
+BLUE = (0,0,255)
+screen = None
 ROW_COUNT = 6   #number of rows in connect 4
 COLUMN_COUNT = 7   #number of columns in connect 4
+height = (ROW_COUNT+1) * SQUARESIZE         # added extra row for the top bar which holds the piece to be dropped
+width = COLUMN_COUNT * SQUARESIZE
 
 # Function that creates the board
 def create_board():
@@ -21,12 +30,14 @@ def add_piece(board, column, player_num):
         for i in range(ROW_COUNT):      # loops over all rows at specified column until it finds an empty cell
             if board[i][column] == 0:
                 board[i][column] = player_num
+                draw_player_circles(board)
+                pygame.display.update()
                 return i, column        # returns the position in which the piece was added as a tuple
   
 # Function that prints a board in its correct connect4 orientation  
 def print_board(board):   
     print(np.flip(board, 0))   #flips the matrix around the x axis
-    
+ 
 # Function that checks if a player won after every move
 def winning_move(board, piece, last_row, last_col):
     
@@ -80,3 +91,64 @@ def winning_move(board, piece, last_row, last_col):
         # if not for loop executes another time to search along a different line or all direction are done so return false
 
     return False
+
+
+################        GUI METHODS     #########################
+
+def display_board(board):
+    pygame.init()
+    pygame.font.init() 
+    size = (width,height)
+    global screen
+    screen = pygame.display.set_mode(size)
+    screen.fill(WHITE)                  # entire screen is white
+    screen.fill(BOARDCOLOR,(0,SQUARESIZE,width,height))         #now only rest of screen expect the top bar is BOARDCOLOR
+    draw_inital_circles(board)                          # adds circles/holes to the board
+    pygame.display.flip()
+
+def check_events(board):
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+                sys.exit()
+        
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            continue            
+
+# Function that adds empty circles to the board
+def draw_inital_circles(board):
+        
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT):
+            position = (c*SQUARESIZE+SQUARESIZE//2, r*SQUARESIZE+SQUARESIZE+SQUARESIZE//2)
+            radius = (SQUARESIZE//2 -5)        
+            pygame.draw.circle(screen,WHITE,position ,radius)
+
+
+# Function that adds player circles to the board         
+def draw_player_circles(board):
+
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT):
+            #Here player piece height differs from initial circles since the board is flipped it adds backwards that why we subtract from height
+            #Also we have to accomodate for the top bar that takes height of SQUARESIZE 
+            position = (c*SQUARESIZE+SQUARESIZE//2, height - int(r*SQUARESIZE+SQUARESIZE/2))
+            radius = (SQUARESIZE//2 -5)        
+   
+            if(board[r][c] == 1):       #PLAYER 1 PIECE
+                color = RED
+            elif(board[r][c] == 2):     #PLAYER 2 PIECE
+                color = BLUE
+            else:                       #EMPTY CIRCLE THEN IGNORE
+                continue
+            pygame.draw.circle(screen,color,position ,radius)
+
+def draw_gameover(board,playerNo):
+    font = pygame.font.SysFont("segoeui", 60,True)            # Font used Arial size 50 in BOLD
+    
+    #creates a surface for text to be rendered on it, False for 24-bit image, 
+    color = (0,0,0)     #black color
+    txtsurf = font.render("Player "+str(playerNo)+" Wins", False, color)
+    
+    screen.blit(txtsurf,  (100 ,0)  )
+    print(pygame.font.get_fonts())
+    pygame.display.update()
