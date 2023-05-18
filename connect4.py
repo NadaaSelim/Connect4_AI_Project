@@ -3,6 +3,7 @@ import time
 import pygame
 import board as bd
 import menu 
+import minimax as mn
 
 
 board = menu.main_menu()
@@ -36,7 +37,9 @@ while not game_over:
                 
                 # player 2 turn
                 else:
-                    column = (event.pos[0]) // 100
+                    #column = (event.pos[0]) // 100
+                    column , minimax_score = mn.minimax(board,2,True)
+
                     if(bd.is_valid_column(board, column)):    #checks to see if there is an empty space
                         row_column = bd.add_piece(board, column, 2)   # adds piece and stores the place it was added
                         if(bd.winning_move(board, 2, row_column[0], row_column[1])):
