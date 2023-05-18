@@ -2,13 +2,17 @@ import sys
 import time
 import pygame
 import board as bd
+import menu 
 
 
-board = bd.create_board()  # creates a new board to play
+board = menu.main_menu()
+#board = bd.create_board()  # creates a new board to play
 game_over = False
 turn = 1  # variable to indicate whose turn it is, right now it's player one
+#menu.main_menu()
 bd.print_board(board)
-bd.display_board(board)
+#bd.display_board(board)
+
 while not game_over:
         #bd.check_events(board)
         for event in pygame.event.get():
@@ -27,7 +31,7 @@ while not game_over:
                             bd.draw_gameover(board,1)
                             print("Player one won !!!")
                             game_over = True
-                            time.sleep(5)
+                            pygame.time.wait(1000)
                     turn = 2    # changes turn so it's player 2
                 
                 # player 2 turn
@@ -39,6 +43,6 @@ while not game_over:
                             bd.draw_gameover(board,2)
                             print("Player two won !!!")
                             game_over = True
-                            time.sleep(5)
+                            pygame.time.wait(1000)
                     turn = 1     #changes turn so it's player 1
             bd.print_board(board)

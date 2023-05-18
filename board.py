@@ -2,6 +2,7 @@ import numpy as np
 import pygame
 import random
 import sys
+import menu
 SQUARESIZE = 100
 WHITE = (255,255,255)
 #BOARDCOLOR = (240,230,140)
@@ -100,7 +101,10 @@ def display_board(board):
     pygame.font.init() 
     size = (width,height)
     global screen
+    #screen = menu.screen
     screen = pygame.display.set_mode(size)
+    pygame.display.set_caption("Game")
+
     screen.fill(WHITE)                  # entire screen is white
     screen.fill(BOARDCOLOR,(0,SQUARESIZE,width,height))         #now only rest of screen expect the top bar is BOARDCOLOR
     draw_inital_circles(board)                          # adds circles/holes to the board
@@ -143,12 +147,11 @@ def draw_player_circles(board):
             pygame.draw.circle(screen,color,position ,radius)
 
 def draw_gameover(board,playerNo):
-    font = pygame.font.SysFont("segoeui", 60,True)            # Font used Arial size 50 in BOLD
-    
+    #font = pygame.font.SysFont("segoeui", 60,True)            # Font used Arial size 50 in BOLD
+    font=pygame.font.Font("slkscre.ttf", 60)
     #creates a surface for text to be rendered on it, False for 24-bit image, 
     color = (0,0,0)     #black color
     txtsurf = font.render("Player "+str(playerNo)+" Wins", False, color)
     
-    screen.blit(txtsurf,  (100 ,0)  )
-    print(pygame.font.get_fonts())
+    screen.blit(txtsurf,  (80 ,30)  )
     pygame.display.update()
