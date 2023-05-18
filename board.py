@@ -154,7 +154,7 @@ def draw_gameover(board,playerNo):
     #creates a surface for text to be rendered on it, False for 24-bit image, 
     color = (0,0,0)     #black color
     winner = "Red" if(playerNo == 1) else "Blue"
-    txtsurf = font.render(winner+" Wins", False, color)
+    txtsurf = font.render(winner+" Wins", False, winner)
     
     screen.blit(txtsurf,  (80 ,30)  )
     pygame.display.update()

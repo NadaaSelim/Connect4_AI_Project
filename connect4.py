@@ -29,14 +29,14 @@ while not game_over:
                 bd.draw_gameover(board,1)
                 print("Player one won !!!") 
                 game_over = True
-                pygame.time.wait(500)
+                pygame.time.wait(2000)
 
                 break
             pygame.time.wait(1500)
             
         turn = 2    # changes turn so it's player 2
     
-    # player 2 turn
+    # player 2 turn AI
     else:
         depth = 4 if easy_mode else 2
         column =  mn.minimax(board,depth,True)[0] if minimax else mn.alpha_beta(board,-1000000,1000000,depth,True)[0]
@@ -48,7 +48,7 @@ while not game_over:
                 bd.draw_gameover(board,2)
                 print("Player two won !!!")
                 game_over = True
-                pygame.time.wait(500)
+                pygame.time.wait(2000)
                 break
             pygame.time.wait(1500)
         turn = 1     #changes turn so it's player 1

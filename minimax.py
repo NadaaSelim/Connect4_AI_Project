@@ -130,7 +130,10 @@ def evaluate_board(board,maxPlayer):
     three_player  += vertical(board,PLAYER_PIECE,3)
     two_player  += vertical(board,PLAYER_PIECE,2)
 
-    return (four_ai * 150 + three_ai * 50 + two_ai * 15 + ai_center_score*10) - (four_player * 150 + three_player * 50 + two_player * 15 + opp_center_score*10)
+    #return (four_ai * 500 + three_ai * 150 + two_ai * 50 + ai_center_score*10) - (four_player * 300 + three_player * 100 + two_player * 40 + opp_center_score*10)
+    return (four_ai  + three_ai  + two_ai  + ai_center_score) - (four_player  + three_player  + two_player  + opp_center_score)
+
+    #return (four_ai * 300 + three_ai * 150 + two_ai * 50 + ai_center_score*10) - (four_player * 300 + three_player * 150 + two_player * 50 + opp_center_score*10)
         
     
     
