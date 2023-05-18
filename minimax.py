@@ -22,6 +22,9 @@ def horizontal(board,piece,streak):
                 if(count >= streak):    # to take in consideration -> 1 1 1 1  is score 1 not 2
                     score += 1
                 count = 0
+        if(count >= streak):
+            score+=1
+        
                 
     return score
 
@@ -36,51 +39,45 @@ def vertical(board,piece,streak):
                 if(count >= streak):    # to take in consideration -> 1 1 1 1  is score 1 not 2
                     score += 1
                 count = 0  
-        
+        if(count >= streak):
+            score += 1
     return score
 
-def diagnoal_PAST(board,piece,streak):
+def pos_diagonals(board,piece,streak):
     score = 0
-    row = 0
-    column = 0
-    count=0
-    while(row < bd.ROW_COUNT and column <bd.COLUMN_COUNT):
-        if(board[row][column]==piece):
-            count+=1
-        else:
-            if(count>=streak):
-                score+=1
-            count = 0
-        row+=1 
-        column+=1
-    return score
 
-
-
-
-
-def diagonals(board,piece,streak):
-    score = 0
-    n = len(board)
-    diagonals = []  # upper-left-to-lower-right diagonals
-
-    for p in range(2*n-1):
-        diagonals.append([board[n-p+q-1][q] for q in range(max(0, p - n + 1), min(p, n - 1) + 1)])
-
-    for i in range(len(diagonals)):
-        print(diagonals[i])
-    for i in range(len(diagonals)):
-        count = 0
-        for j in range (len(diagonals[i])):
-            
-                if(diagonals[i][j] == piece):
-                    count +=1
-                else:
-                    if(count >= streak):
-                        score+=1
-                    count=0
-    return score
+    for i in range(-2,4):
+        diagonal=board.diagonal(i)
         
+        count =0
+        for j in range(len(diagonal)):
+            if(diagonal[j] == piece):
+                count+=1
+            else:
+                if(count >= streak):
+                    score +=1
+                count = 0
+        if(count >= streak):
+            score+=1
+    return score
+
+def neg_diagonals(board,piece,streak):
+    score = 0
+    for i in range(-2,4):
+        
+        diagonal=np.flipud(board).diagonal(i)
+        
+        count =0
+        for j in range(len(diagonal)):
+            if(diagonal[j] == piece):
+                count+=1
+            else:
+                if(count >= streak):
+                    score +=1
+                count = 0
+        if(count >= streak):
+            score+=1
+    return score     
           
 
 # evaluate the current board (state) based on
@@ -122,6 +119,14 @@ def evaluate_board(board,maxPlayer):
     three_ai  += vertical(board,AI_PIECE,3)
     two_ai  += vertical(board,AI_PIECE,2)
 
+    four_ai  += pos_diagonals(board,AI_PIECE,4)
+    three_ai  +=pos_diagonals(board,AI_PIECE,3)
+    two_ai  += pos_diagonals(board,AI_PIECE,2)
+
+    four_ai  += neg_diagonals(board,AI_PIECE,4)
+    three_ai  +=neg_diagonals(board,AI_PIECE,3)
+    two_ai  += neg_diagonals(board,AI_PIECE,2)
+
     four_player  += horizontal(board,PLAYER_PIECE,4)
     three_player  += horizontal(board,PLAYER_PIECE,3)
     two_player  += horizontal(board,PLAYER_PIECE,2)
@@ -129,6 +134,14 @@ def evaluate_board(board,maxPlayer):
     four_player  += vertical(board,PLAYER_PIECE,4)
     three_player  += vertical(board,PLAYER_PIECE,3)
     two_player  += vertical(board,PLAYER_PIECE,2)
+
+    four_player  += pos_diagonals(board,PLAYER_PIECE,4)
+    three_player  +=pos_diagonals(board,PLAYER_PIECE,3)
+    two_player  += pos_diagonals(board,PLAYER_PIECE,2)
+
+    four_player  += neg_diagonals(board,PLAYER_PIECE,4)
+    three_player  +=neg_diagonals(board,PLAYER_PIECE,3)
+    two_player  += neg_diagonals(board,PLAYER_PIECE,2)
 
     #return (four_ai * 500 + three_ai * 150 + two_ai * 50 + ai_center_score*10) - (four_player * 300 + three_player * 100 + two_player * 40 + opp_center_score*10)
     return (four_ai  + three_ai  + two_ai  + ai_center_score) - (four_player  + three_player  + two_player  + opp_center_score)
@@ -229,15 +242,42 @@ def alpha_beta(board,alpha,beta,depth,maxPlayer):
         #return column, value
     return column ,value
 
+def diagonal_2(board,piece,streak):
+    score = 0
+
+    for i in range(-2,4):
+        diagonal=board.diagonal(i)
+        count =0
+        print(diagonal,len(diagonal))
+        for j in range(len(diagonal)):
+            if(diagonal[j] == piece):
+                count+=1
+            else:
+                if(count >= streak):
+                    score +=1
+                count = 0
+        if(count >= streak):
+            score+=1
+    return score
+
 def test():
-    matrix= np.array([ [1, 0, 2, 0, 0, 2, 2],
-                  [1, 1, 1, 2, 1, 2, 2],
-                  [0, 0, 0, 0, 2, 2, 2],
-                  [0, 0, 0, 0, 2, 0, 0],
-                  [0, 0, 0, 0, 0, 2, 0],
-                  [0, 0, 0, 0, 0, 0, 2]
-            ],np.int32)
-    print(vertical(matrix,AI_PIECE,2))
+    matrix= np.array([  [1, 0, 2, 0, 0, 2, 2],
+                        [1, 1, 1, 2, 1, 2, 2],
+                        [0, 0, 0, 0, 2, 2, 2],
+                        [2, 0, 0, 0, 2, 0, 0],
+                        [2, 0, 0, 0, 0, 2, 0],
+                        [2, 0, 0, 0, 0, 0, 2]
+            ])
+    print(vertical(matrix,2,3))
+
+
+
+
+  
+ 
+
+    
+
 
 
 
