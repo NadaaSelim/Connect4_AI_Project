@@ -31,8 +31,8 @@ def add_piece(board, column, player_num):
         for i in range(ROW_COUNT):      # loops over all rows at specified column until it finds an empty cell
             if board[i][column] == 0:
                 board[i][column] = player_num
-                draw_player_circles(board)
-                pygame.display.update()
+                #draw_player_circles(board)
+                #pygame.display.update()
                 return i, column        # returns the position in which the piece was added as a tuple
   
 # Function that prints a board in its correct connect4 orientation  
@@ -130,7 +130,7 @@ def draw_inital_circles(board):
 
 # Function that adds player circles to the board         
 def draw_player_circles(board):
-
+    draw_inital_circles(board)
     for c in range(COLUMN_COUNT):
         for r in range(ROW_COUNT):
             #Here player piece height differs from initial circles since the board is flipped it adds backwards that why we subtract from height
@@ -139,19 +139,22 @@ def draw_player_circles(board):
             radius = (SQUARESIZE//2 -5)        
    
             if(board[r][c] == 1):       #PLAYER 1 PIECE
-                color = RED
+                pygame.draw.circle(screen,RED,position ,radius)
             elif(board[r][c] == 2):     #PLAYER 2 PIECE
-                color = BLUE
-            else:                       #EMPTY CIRCLE THEN IGNORE
-                continue
-            pygame.draw.circle(screen,color,position ,radius)
+                pygame.draw.circle(screen,BLUE,position ,radius)
+
+            #else:                       #EMPTY CIRCLE THEN IGNORE
+            #pygame.draw.circle(screen,color,position ,radius)
+            #pygame.draw.circle(screen,color,position ,radius)
+    pygame.display.update()
 
 def draw_gameover(board,playerNo):
     #font = pygame.font.SysFont("segoeui", 60,True)            # Font used Arial size 50 in BOLD
     font=pygame.font.Font("slkscre.ttf", 60)
     #creates a surface for text to be rendered on it, False for 24-bit image, 
     color = (0,0,0)     #black color
-    txtsurf = font.render("Player "+str(playerNo)+" Wins", False, color)
+    winner = "Red" if(playerNo == 1) else "Blue"
+    txtsurf = font.render(winner+" Wins", False, color)
     
     screen.blit(txtsurf,  (80 ,30)  )
     pygame.display.update()

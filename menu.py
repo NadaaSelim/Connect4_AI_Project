@@ -12,7 +12,8 @@ def main_menu():
     flag = False
     xposCenter = bd.width//2
     font = pygame.font.Font("slkscre.ttf", 50)
-
+    easy_mode = True
+    minimax = True
     #font = pygame.font.SysFont("segoeui", 60,True)            # Font used Arial size 50 in BOLD
     Itemsfont = pygame.font.Font("slkscre.ttf", 40)
 
@@ -56,11 +57,12 @@ def main_menu():
                     HARD_BUTTON.update(screen)
                     EASY_BUTTON.setClicked(True)
                     EASY_BUTTON.update(screen)
+                    easy_mode = True
 
                 if HARD_BUTTON.checkForInput(game_pos):
                     EASY_BUTTON.setClicked(False)
                     EASY_BUTTON.update(screen)
-
+                    easy_mode = False
                     HARD_BUTTON.setClicked(True)
                     HARD_BUTTON.update(screen)
                 
@@ -68,14 +70,14 @@ def main_menu():
                 if MINIMAX_BUTTON.checkForInput(game_pos):
                     AB_BUTTON.setClicked(False)
                     AB_BUTTON.update(screen)
-
+                    minimax = True
                     MINIMAX_BUTTON.setClicked(True)
                     MINIMAX_BUTTON.update(screen)
                 
                 if AB_BUTTON.checkForInput(game_pos):
                     MINIMAX_BUTTON.setClicked(False)
                     MINIMAX_BUTTON.update(screen)
-
+                    minimax = False
                     AB_BUTTON.setClicked(True)
                     AB_BUTTON.update(screen)
                 # if MINIMAX_BUTTON.checkForInput(game_pos):
@@ -84,10 +86,9 @@ def main_menu():
                 if START_BUTTON.checkForInput(game_pos):
                     screen.fill((0,0,0))
                     flag = True
-                    print("clicked")
                     #pygame.quit()
                     bd.display_board(board)
-                    return board
+                    return board,easy_mode,minimax
                     
 
         pygame.display.update()

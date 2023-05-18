@@ -85,8 +85,28 @@ def diagonals(board,piece,streak):
 
 # evaluate the current board (state) based on
 # how many adjacent four pieces vertically ,horizontally,diagonally(poistive and negative sloped)
-#the score of four pieces is 150 , the score of three is 50 , the score of 2 is 15
+#the score of four pieces is 150 , the score of three is 50 , the score of 2 is 15, score of center columns is its weight * 10
 def evaluate_board(board,maxPlayer):
+    ai_center_score =0
+    opp_center_score=0
+
+    #realisticly ai should prefer the board with more of its pieces in center column as it would mean more chances to win
+    for col in range(bd.COLUMN_COUNT):
+        for row in range(bd.ROW_COUNT):
+            if board[row][col] == AI_PIECE:
+                 if col == bd.COLUMN_COUNT//2:
+                     ai_center_score += 3
+                 elif col in range(2,5):
+                     ai_center_score+= 2
+                 else:
+                     ai_center_score +=1
+            if board[row][col] == PLAYER_PIECE:
+                 if col == bd.COLUMN_COUNT//2:
+                     opp_center_score += 3
+                 elif col in range(2,5):
+                     opp_center_score+= 2
+                 else:
+                     opp_center_score +=1
     four_ai = 0 
     three_ai = 0
     two_ai = 0
@@ -110,7 +130,7 @@ def evaluate_board(board,maxPlayer):
     three_player  += vertical(board,PLAYER_PIECE,3)
     two_player  += vertical(board,PLAYER_PIECE,2)
 
-    return (four_ai * 150 + three_ai * 50 + two_ai * 15) - (four_player * 150 + three_player * 50 + two_player * 15)
+    return (four_ai * 150 + three_ai * 50 + two_ai * 15 + ai_center_score*10) - (four_player * 150 + three_player * 50 + two_player * 15 + opp_center_score*10)
         
     
     
@@ -133,12 +153,12 @@ def minimax(board,depth,maxPlayer):
    
     valid_locations=bd.get_valid_locations(board)
     if depth == 0 or is_terminal(board):
-        bd.print_board(board)
+        #bd.print_board(board)
         if(is_terminal(board)):
             print(utility(board))
             return None,utility(board)
         else:
-            print(evaluate_board(board,maxPlayer))
+            #print(evaluate_board(board,maxPlayer))
             return None,evaluate_board(board,maxPlayer)
     if maxPlayer:
         value=-1000000
@@ -162,6 +182,49 @@ def minimax(board,depth,maxPlayer):
                 value  = new_value
                 column = col
         return column, value
+    
+def alpha_beta(board,alpha,beta,depth,maxPlayer):
+    valid_locations=bd.get_valid_locations(board)
+    if depth == 0 or is_terminal(board):
+        #bd.print_board(board)
+        if(is_terminal(board)):
+            #print(utility(board))
+            return None,utility(board)
+        else:
+            #print(evaluate_board(board,maxPlayer))
+            return None,evaluate_board(board,maxPlayer)
+    if maxPlayer:
+        value=-1000000
+        column = random.choice(valid_locations)
+        for col in valid_locations:
+            board_copy = copy.deepcopy(board)
+            bd.add_piece(board_copy,col,AI_PIECE)
+            new_value = alpha_beta(board_copy,alpha,beta,depth-1,False)[1]
+            if new_value > value:
+                value  = new_value
+                column = col
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                print("Pruning..")
+                break
+
+        #return column, value
+    else:
+        value=1000000
+        column = random.choice(valid_locations)
+        for col in valid_locations:
+            board_copy = copy.deepcopy(board)
+            bd.add_piece(board_copy,col,PLAYER_PIECE)
+            new_value = alpha_beta(board_copy,alpha,beta,depth-1,True)[1]
+            if new_value < value:
+                value  = new_value
+                column = col
+            beta = min(beta,value)
+            if alpha >= beta:
+                print("Pruning..")
+                break
+        #return column, value
+    return column ,value
 
 def test():
     matrix= np.array([ [1, 0, 2, 0, 0, 2, 2],
