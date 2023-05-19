@@ -20,7 +20,7 @@ while not game_over:
             sys.exit()
 
     if turn == 1:
-        column = int(input("Column from 0-6 : "))
+        column = random.randint(0, 6)
         print("COLUMN=",column)
         if(bd.is_valid_column(board, column)):    #checks to see if there is an empty space
             row_column = bd.add_piece(board, column, 1)   # adds piece and stores the place it was added

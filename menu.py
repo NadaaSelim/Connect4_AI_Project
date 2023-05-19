@@ -18,7 +18,7 @@ def main_menu():
     Itemsfont = pygame.font.Font("slkscre.ttf", 40)
 
     EASY_BUTTON = btn.Button( pos=(xposCenter, 150), text_input="Easy", font=Itemsfont,clicked=True)
-    HARD_BUTTON = btn.Button( pos=(xposCenter, 250), text_input="Difficult", font=Itemsfont,clicked= False)
+    HARD_BUTTON = btn.Button( pos=(xposCenter, 250), text_input="Hard", font=Itemsfont,clicked= False)
     MINIMAX_BUTTON = btn.Button( pos=(xposCenter, 450), text_input="Mini-max", font=Itemsfont,clicked= True)
     AB_BUTTON = btn.Button( pos=(xposCenter, 550), text_input="Alpha-Beta Pruning", font=Itemsfont,clicked=False)
     board = bd.create_board()

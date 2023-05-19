@@ -25,42 +25,65 @@ def is_terminal(board):
 
 def minimax(board,depth,maxPlayer):
    
-    #bd.print_board(board)
+    # gets all possible valid loactions that the player can add a piece in
     valid_locations=bd.get_valid_locations(board)
+    # stopping condition 
+    # 1- reached required depth
+    # 2-state is a terminal state (win , lose ,tie)
     if depth == 0 or is_terminal(board):
         if(is_terminal(board)):
             return None,utility(board)
         else:
-            #print("end: ",ev.evaluate(board, maxPlayer))
+            # evaluates the current board score based on player's turn
             if maxPlayer == True:
                 piece = AI_PIECE
             else:
                 piece = PLAYER_PIECE
             return None, ev.evaluate(board, piece)
+    
+    # maxmizing  palyer turn
+    # finds the move the leads to the most possible wins
     if maxPlayer:
-        value = -math.inf
+        
+        # intialize
+        score = -math.inf
         column = random.choice(valid_locations)
+
+        # tries every possible move
         for col in valid_locations:
             board_copy = copy.deepcopy(board)
             bd.add_piece(board_copy,col,AI_PIECE)
-            new_value = minimax(board_copy,depth-1,False)[1]
-            if new_value > value:
-                value  = new_value
+            new_score = minimax(board_copy,depth-1,False)[1]
+
+            # takes the max move (best move)
+            if new_score > score:
+
+                score  = new_score
                 column = col
-                #print("val: ", value, "col: ", column)
-        return column, value
+        
+        return column, score
+    
+    #minimize player's turn
+    #finds the move that lead to lowest number of wins for the max player
     else:
-        value = math.inf
+
+        #intialize
+        score = math.inf
         column = random.choice(valid_locations)
+
+        # tries every possible move
         for col in valid_locations:
             board_copy = copy.deepcopy(board)
             bd.add_piece(board_copy,col,PLAYER_PIECE)
-            new_value = minimax(board_copy,depth-1,True)[1]
-            if new_value < value:
-                value  = new_value
+            new_score = minimax(board_copy,depth-1,True)[1]
+
+            # takes the min score
+            if new_score < score:
+
+                score  = new_score
                 column = col
-                #print("val: ", value, "col: ", column)
-        return column, value
+               
+        return column, score
     
 def alpha_beta(board,alpha,beta,depth,maxPlayer):
     valid_locations=bd.get_valid_locations(board)

@@ -11,17 +11,17 @@ COLUMN_COUNT = 7   #number of columns in connect 4
 def list_score(pieces_list, piece, opp_piece):
     score = 0
     if(pieces_list.count(piece)==4):
-        score += 100000000
+        score += 1000000
+    
+    if(pieces_list.count(opp_piece)==4):
+        score -= 100000000
     else:
-        if(pieces_list.count(opp_piece)==4):
+        score += pieces_list.count(piece) * 25
+        #score -= pieces_list.count(opp_piece) * 25
+        if(pieces_list.count(opp_piece) == 3 and pieces_list.count(piece) == 1):
+            score += 100000000
+        elif(pieces_list.count(opp_piece) == 3 and pieces_list.count(0) == 1):
             score -= 100000000
-        else:
-            score += pieces_list.count(piece) * 25
-            #score -= pieces_list.count(opp_piece) * 25
-            if(pieces_list.count(opp_piece) == 3 and pieces_list.count(piece) == 1):
-                score += 100000000
-            elif(pieces_list.count(opp_piece) == 3 and pieces_list.count(0) == 1):
-                score -= 100000000
     return score
 def evaluate(board, piece):
 
