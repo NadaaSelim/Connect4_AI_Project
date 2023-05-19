@@ -11,7 +11,7 @@ import minimax as mn
 board,easy_mode,minimax = menu.main_menu()      
 game_over = False
 turn = random.randint(1,2)  # variable to indicate whose turn it is, first player is randomly choosen
-#bd.print_board(board)
+is_first_Time = True
  
 while not game_over:
     for event in pygame.event.get():
@@ -20,7 +20,7 @@ while not game_over:
             sys.exit()
 
     if turn == 1:
-        column = random.randint(0, 6)
+        column = int(input("Column from 0-6 : "))
         print("COLUMN=",column)
         if(bd.is_valid_column(board, column)):    #checks to see if there is an empty space
             row_column = bd.add_piece(board, column, 1)   # adds piece and stores the place it was added
@@ -38,8 +38,17 @@ while not game_over:
     
     # player 2 turn AI
     else:
-        depth = 4 if easy_mode else 2
-        column =  mn.minimax(board,depth,True)[0] if minimax else mn.alpha_beta(board,-1000000,1000000,depth,True)[0]
+        
+        if easy_mode:
+            depth = 2
+        else:
+            depth = 5
+        
+        if(is_first_Time == True):
+            column = 3
+            is_first_Time = False
+        else:
+            column =  mn.minimax(board,depth,True)[0] if minimax else mn.alpha_beta(board,-1000000,1000000,depth,True)[0]
        
         if(bd.is_valid_column(board, column)):    #checks to see if there is an empty space
             row_column = bd.add_piece(board, column, 2)   # adds piece and stores the place it was added

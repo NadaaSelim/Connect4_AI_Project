@@ -3,161 +3,19 @@ import random
 import board as bd
 import copy
 import numpy as np
-
+import evaluate as ev
+import math
 
 
 PLAYER_PIECE=1  # min
 AI_PIECE=2  #max
 
 
-def horizontal(board,piece,streak):
-    score = 0
-    for i in range(bd.ROW_COUNT):
-        count = 0
-        for j in range(bd.COLUMN_COUNT):
-            if(board[i][j] == piece):
-                count += 1
-            
-            else:
-                if(count >= streak):    # to take in consideration -> 1 1 1 1  is score 1 not 2
-                    score += 1
-                count = 0
-        if(count >= streak):
-            score+=1
-        
-                
-    return score
-
-def vertical(board,piece,streak):
-    score = 0
-    for i in range(bd.COLUMN_COUNT):
-        count = 0
-        for j in range(bd.ROW_COUNT):
-            if(board[j][i] == piece ):
-                count += 1
-            else:
-                if(count >= streak):    # to take in consideration -> 1 1 1 1  is score 1 not 2
-                    score += 1
-                count = 0  
-        if(count >= streak):
-            score += 1
-    return score
-
-def pos_diagonals(board,piece,streak):
-    score = 0
-
-    for i in range(-2,4):
-        diagonal=board.diagonal(i)
-        
-        count =0
-        for j in range(len(diagonal)):
-            if(diagonal[j] == piece):
-                count+=1
-            else:
-                if(count >= streak):
-                    score +=1
-                count = 0
-        if(count >= streak):
-            score+=1
-    return score
-
-def neg_diagonals(board,piece,streak):
-    score = 0
-    for i in range(-2,4):
-        
-        diagonal=np.flipud(board).diagonal(i)
-        
-        count =0
-        for j in range(len(diagonal)):
-            if(diagonal[j] == piece):
-                count+=1
-            else:
-                if(count >= streak):
-                    score +=1
-                count = 0
-        if(count >= streak):
-            score+=1
-    return score     
-          
-
-# evaluate the current board (state) based on
-# how many adjacent four pieces vertically ,horizontally,diagonally(poistive and negative sloped)
-#the score of four pieces is 150 , the score of three is 50 , the score of 2 is 15, score of center columns is its weight * 10
-def evaluate_board(board,maxPlayer):
-    ai_center_score =0
-    opp_center_score=0
-
-    #realisticly ai should prefer the board with more of its pieces in center column as it would mean more chances to win
-    for col in range(bd.COLUMN_COUNT):
-        for row in range(bd.ROW_COUNT):
-            if board[row][col] == AI_PIECE:
-                 if col == bd.COLUMN_COUNT//2:
-                     ai_center_score += 3
-                 elif col in range(2,5):
-                     ai_center_score+= 2
-                 else:
-                     ai_center_score +=1
-            if board[row][col] == PLAYER_PIECE:
-                 if col == bd.COLUMN_COUNT//2:
-                     opp_center_score += 3
-                 elif col in range(2,5):
-                     opp_center_score+= 2
-                 else:
-                     opp_center_score +=1
-    four_ai = 0 
-    three_ai = 0
-    two_ai = 0
-    four_player = 0
-    three_player = 0
-    two_player = 0
-
-    four_ai  += horizontal(board,AI_PIECE,4)
-    three_ai  += horizontal(board,AI_PIECE,3)
-    two_ai  += horizontal(board,AI_PIECE,2)
-
-    four_ai  += vertical(board,AI_PIECE,4)
-    three_ai  += vertical(board,AI_PIECE,3)
-    two_ai  += vertical(board,AI_PIECE,2)
-
-    four_ai  += pos_diagonals(board,AI_PIECE,4)
-    three_ai  +=pos_diagonals(board,AI_PIECE,3)
-    two_ai  += pos_diagonals(board,AI_PIECE,2)
-
-    four_ai  += neg_diagonals(board,AI_PIECE,4)
-    three_ai  +=neg_diagonals(board,AI_PIECE,3)
-    two_ai  += neg_diagonals(board,AI_PIECE,2)
-
-    four_player  += horizontal(board,PLAYER_PIECE,4)
-    three_player  += horizontal(board,PLAYER_PIECE,3)
-    two_player  += horizontal(board,PLAYER_PIECE,2)
-
-    four_player  += vertical(board,PLAYER_PIECE,4)
-    three_player  += vertical(board,PLAYER_PIECE,3)
-    two_player  += vertical(board,PLAYER_PIECE,2)
-
-    four_player  += pos_diagonals(board,PLAYER_PIECE,4)
-    three_player  +=pos_diagonals(board,PLAYER_PIECE,3)
-    two_player  += pos_diagonals(board,PLAYER_PIECE,2)
-
-    four_player  += neg_diagonals(board,PLAYER_PIECE,4)
-    three_player  +=neg_diagonals(board,PLAYER_PIECE,3)
-    two_player  += neg_diagonals(board,PLAYER_PIECE,2)
-
-    #return (four_ai * 500 + three_ai * 150 + two_ai * 50 + ai_center_score*10) - (four_player * 300 + three_player * 100 + two_player * 40 + opp_center_score*10)
-    return (four_ai  + three_ai  + two_ai  + ai_center_score) - (four_player  + three_player  + two_player  + opp_center_score)
-
-    #return (four_ai * 300 + three_ai * 150 + two_ai * 50 + ai_center_score*10) - (four_player * 300 + three_player * 150 + two_player * 50 + opp_center_score*10)
-        
-    
-    
-
-
-
 def utility(board):
     if(bd.get_winner(board,AI_PIECE) ):
-        return 150   #max won
+        return 10000000000   #max won
     if(bd.get_winner(board,PLAYER_PIECE) ):
-        return -150   #min won
+        return -10000000000   #min won
     else:
         return 0    #tie
 
@@ -167,17 +25,20 @@ def is_terminal(board):
 
 def minimax(board,depth,maxPlayer):
    
+    #bd.print_board(board)
     valid_locations=bd.get_valid_locations(board)
     if depth == 0 or is_terminal(board):
-        #bd.print_board(board)
         if(is_terminal(board)):
-            print(utility(board))
             return None,utility(board)
         else:
-            #print(evaluate_board(board,maxPlayer))
-            return None,evaluate_board(board,maxPlayer)
+            #print("end: ",ev.evaluate(board, maxPlayer))
+            if maxPlayer == True:
+                piece = AI_PIECE
+            else:
+                piece = PLAYER_PIECE
+            return None, ev.evaluate(board, piece)
     if maxPlayer:
-        value=-1000000
+        value = -math.inf
         column = random.choice(valid_locations)
         for col in valid_locations:
             board_copy = copy.deepcopy(board)
@@ -186,9 +47,10 @@ def minimax(board,depth,maxPlayer):
             if new_value > value:
                 value  = new_value
                 column = col
+                #print("val: ", value, "col: ", column)
         return column, value
     else:
-        value=1000000
+        value = math.inf
         column = random.choice(valid_locations)
         for col in valid_locations:
             board_copy = copy.deepcopy(board)
@@ -197,6 +59,7 @@ def minimax(board,depth,maxPlayer):
             if new_value < value:
                 value  = new_value
                 column = col
+                #print("val: ", value, "col: ", column)
         return column, value
     
 def alpha_beta(board,alpha,beta,depth,maxPlayer):
@@ -208,9 +71,13 @@ def alpha_beta(board,alpha,beta,depth,maxPlayer):
             return None,utility(board)
         else:
             #print(evaluate_board(board,maxPlayer))
-            return None,evaluate_board(board,maxPlayer)
+            if maxPlayer == True:
+                piece = AI_PIECE
+            else:
+                piece = PLAYER_PIECE
+            return None,ev.evaluate(board, maxPlayer)
     if maxPlayer:
-        value=-1000000
+        value=-math.inf
         column = random.choice(valid_locations)
         for col in valid_locations:
             board_copy = copy.deepcopy(board)
@@ -221,12 +88,11 @@ def alpha_beta(board,alpha,beta,depth,maxPlayer):
                 column = col
             alpha = max(alpha, value)
             if alpha >= beta:
-                print("Pruning..")
                 break
 
         #return column, value
     else:
-        value=1000000
+        value=math.inf
         column = random.choice(valid_locations)
         for col in valid_locations:
             board_copy = copy.deepcopy(board)
@@ -237,40 +103,22 @@ def alpha_beta(board,alpha,beta,depth,maxPlayer):
                 column = col
             beta = min(beta,value)
             if alpha >= beta:
-                print("Pruning..")
                 break
         #return column, value
     return column ,value
 
-def diagonal_2(board,piece,streak):
-    score = 0
-
-    for i in range(-2,4):
-        diagonal=board.diagonal(i)
-        count =0
-        print(diagonal,len(diagonal))
-        for j in range(len(diagonal)):
-            if(diagonal[j] == piece):
-                count+=1
-            else:
-                if(count >= streak):
-                    score +=1
-                count = 0
-        if(count >= streak):
-            score+=1
-    return score
-
-def test():
-    matrix= np.array([  [1, 0, 2, 0, 0, 2, 2],
-                        [1, 1, 1, 2, 1, 2, 2],
-                        [0, 0, 0, 0, 2, 2, 2],
-                        [2, 0, 0, 0, 2, 0, 0],
-                        [2, 0, 0, 0, 0, 2, 0],
-                        [2, 0, 0, 0, 0, 0, 2]
-            ])
-    print(vertical(matrix,2,3))
 
 
+# todo reemove
+board = np.array([  [0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 1, 0, 0, 0],
+                    [0, 0, 0, 2, 0, 0, 0],
+                    [0, 0, 0, 2, 2, 0, 0],
+                    [0, 0, 0, 2, 1, 0, 0],
+                    [0, 0, 1, 1, 1, 0, 0]
+                                                ])
+
+#print(evaluate_board(board,2))
 
 
   
