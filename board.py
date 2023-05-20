@@ -3,6 +3,7 @@ import pygame
 import random
 import sys
 import menu
+
 SQUARESIZE = 100
 WHITE = (255,255,255)
 #BOARDCOLOR = (240,230,140)
