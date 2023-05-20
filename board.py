@@ -93,6 +93,37 @@ def winning_move(board, piece, last_row, last_col):
 
     return False
 
+def get_valid_locations(board):
+	valid_locations = []
+	for col in range(COLUMN_COUNT):
+		if is_valid_column(board, col):
+			valid_locations.append(col)
+	return valid_locations
+
+def get_winner(board, piece):
+	# Check horizontal locations for win
+	for c in range(COLUMN_COUNT-3):
+		for r in range(ROW_COUNT):
+			if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
+				return True
+
+	# Check vertical locations for win
+	for c in range(COLUMN_COUNT):
+		for r in range(ROW_COUNT-3):
+			if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
+				return True
+	# Check positively sloped diaganols
+	for c in range(COLUMN_COUNT-3):
+		for r in range(ROW_COUNT-3):
+			if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
+				return True
+
+	# Check negatively sloped diaganols
+	for c in range(COLUMN_COUNT-3):
+		for r in range(3, ROW_COUNT):
+			if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+				return True
+                        
 
 ################        GUI METHODS     #########################
 
@@ -149,43 +180,31 @@ def draw_player_circles(board):
     pygame.display.update()
 
 def draw_gameover(board,playerNo):
-    #font = pygame.font.SysFont("segoeui", 60,True)            # Font used Arial size 50 in BOLD
     font=pygame.font.Font("slkscre.ttf", 60)
     #creates a surface for text to be rendered on it, False for 24-bit image, 
-    color = (0,0,0)     #black color
-    winner = "Red" if(playerNo == 1) else "Blue"
-    txtsurf = font.render(winner+" Wins", False, winner)
+    #color = (0,0,0)     #black color
+    #winner = "Red" if(playerNo == 1) else "Blue"
+    screen.fill(WHITE,(0,0,width,SQUARESIZE))       #clear top bar
+
+    coord = (80 ,30)
+    if(playerNo == 0):
+        txtsurf = font.render("TIE",False,"Black")
+        coord = (250,30)
+    elif(playerNo == 1):
+        txtsurf = font.render("Red Wins",False,"Red")
+    else:
+        txtsurf = font.render("Blue Wins",False,"Blue") 
     
-    screen.blit(txtsurf,  (80 ,30)  )
+    screen.blit(txtsurf,  coord  )
     pygame.display.update()
 
-def get_valid_locations(board):
-	valid_locations = []
-	for col in range(COLUMN_COUNT):
-		if is_valid_column(board, col):
-			valid_locations.append(col)
-	return valid_locations
-
-def get_winner(board, piece):
-	# Check horizontal locations for win
-	for c in range(COLUMN_COUNT-3):
-		for r in range(ROW_COUNT):
-			if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
-				return True
-
-	# Check vertical locations for win
-	for c in range(COLUMN_COUNT):
-		for r in range(ROW_COUNT-3):
-			if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
-				return True
-	# Check positively sloped diaganols
-	for c in range(COLUMN_COUNT-3):
-		for r in range(ROW_COUNT-3):
-			if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
-				return True
-
-	# Check negatively sloped diaganols
-	for c in range(COLUMN_COUNT-3):
-		for r in range(3, ROW_COUNT):
-			if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
-				return True
+def draw_turn(board,playerNo):
+    font=pygame.font.Font("slkscre.ttf", 50)
+    coord = (70 ,30)
+    if(playerNo == 1):
+        txtsurf = font.render("Computer's Turn",False,"Red")
+    else:
+        txtsurf = font.render("Agent's Turn",False,"Blue") 
+    screen.fill(WHITE,(0,0,width,SQUARESIZE))       #clear top bar
+    screen.blit(txtsurf,  coord  )
+    pygame.display.update()

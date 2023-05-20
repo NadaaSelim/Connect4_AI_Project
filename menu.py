@@ -9,12 +9,11 @@ def main_menu():
     global screen
     screen = pygame.display.set_mode((bd.width,bd.height))
     screen.fill((190,180,180))
-    flag = False
+    flag = False        # user clicked on start button to navigate to game screen
     xposCenter = bd.width//2
     font = pygame.font.Font("slkscre.ttf", 50)
     easy_mode = True
     minimax = True
-    #font = pygame.font.SysFont("segoeui", 60,True)            # Font used Arial size 50 in BOLD
     Itemsfont = pygame.font.Font("slkscre.ttf", 40)
 
     EASY_BUTTON = btn.Button( pos=(xposCenter, 150), text_input="Easy", font=Itemsfont,clicked=True)
@@ -80,9 +79,7 @@ def main_menu():
                     minimax = False
                     AB_BUTTON.setClicked(True)
                     AB_BUTTON.update(screen)
-                # if MINIMAX_BUTTON.checkForInput(game_pos):
-                #     pass
-
+                
                 if START_BUTTON.checkForInput(game_pos):
                     screen.fill((0,0,0))
                     flag = True

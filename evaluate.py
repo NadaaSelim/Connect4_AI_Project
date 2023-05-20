@@ -23,8 +23,8 @@ def list_score(pieces_list, piece, opp_piece):
         elif(pieces_list.count(opp_piece) == 3 and pieces_list.count(0) == 1):
             score -= 100000000
     return score
-def evaluate(board, piece):
 
+def evaluate(board, piece):
 
         if(piece == 1):
             opp_piece = 2
@@ -75,9 +75,9 @@ def evaluate(board, piece):
 # todo remove this             
 board = np.array([  [0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 2, 2, 0, 0, 0],
-                    [0, 0, 1, 1, 1, 0, 2],
-                    [2, 1, 2, 1, 2, 2, 0],
-                    [1, 2, 2, 2, 1, 1, 1]
+                    [0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 1, 0, 0, 0],
+                    [0, 0, 0, 2, 2, 1, 2]
                                                 ])
 print(evaluate(board,2))

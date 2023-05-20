@@ -84,16 +84,14 @@ def minimax(board,depth,maxPlayer):
                 column = col
                
         return column, score
-    
+
+# exactly like minimax except it prunes children onces alpha >=beta    
 def alpha_beta(board,alpha,beta,depth,maxPlayer):
     valid_locations=bd.get_valid_locations(board)
     if depth == 0 or is_terminal(board):
-        #bd.print_board(board)
         if(is_terminal(board)):
-            #print(utility(board))
             return None,utility(board)
         else:
-            #print(evaluate_board(board,maxPlayer))
             if maxPlayer == True:
                 piece = AI_PIECE
             else:
@@ -109,11 +107,11 @@ def alpha_beta(board,alpha,beta,depth,maxPlayer):
             if new_value > value:
                 value  = new_value
                 column = col
+            # max player only changes alpha and assigns alpha to the max of its current value and child's score
             alpha = max(alpha, value)
             if alpha >= beta:
                 break
 
-        #return column, value
     else:
         value=math.inf
         column = random.choice(valid_locations)
@@ -124,28 +122,12 @@ def alpha_beta(board,alpha,beta,depth,maxPlayer):
             if new_value < value:
                 value  = new_value
                 column = col
+            # min player only changes beta and assigns alpha to the min of its current value and child's score
             beta = min(beta,value)
             if alpha >= beta:
                 break
-        #return column, value
     return column ,value
 
-
-
-# todo reemove
-board = np.array([  [0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 1, 0, 0, 0],
-                    [0, 0, 0, 2, 0, 0, 0],
-                    [0, 0, 0, 2, 2, 0, 0],
-                    [0, 0, 0, 2, 1, 0, 0],
-                    [0, 0, 1, 1, 1, 0, 0]
-                                                ])
-
-#print(evaluate_board(board,2))
-
-
-  
- 
 
     
 
